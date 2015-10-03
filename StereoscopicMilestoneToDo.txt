@@ -1,0 +1,9 @@
+Stereoscopic Milestone
+
+### Goal ###
+-- Working stereoscopic vision using our two cameras
+
+### ToDo ###
+-- Two cameras simultaneously running in OpenCV Visual Studio
+-- Stereoscopic algorithm and calculations
+-- Implement cameras being used for the quadcopter
