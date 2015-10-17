@@ -8,73 +8,61 @@
 #include "opencv2/highgui/highgui.hpp"
 #include "opencv2/imgproc/imgproc.hpp"
 #include "opencv2/calib3d/calib3d.hpp"
+#include "opencv2/contrib/contrib.hpp"
+#include <stdio.h>
 
 using namespace cv;
 using namespace std;
 
 int main(int argc, char** argv)
 {
-	VideoCapture cap(0); //capture the video from web cam
 
-	if (!cap.isOpened())  // if not success, exit program
+	// Capture the video from the webcom
+	VideoCapture cap(0); 
+
+	// If there's no video capture, exit program
+	if (!cap.isOpened())  
 	{
 		cout << "Cannot open the web cam" << endl;
 		return -1;
 	}
 
-	
-
-	////changed it to cvNamedWindow
-	//cvNamedWindow("Control", CV_WINDOW_AUTOSIZE); //create a window called "Control"
-
-	//int iLowH = 0;
-	//int iHighH = 179;
-
-	//int iLowS = 0;
-	//int iHighS = 255;
-
-	//int iLowV = 0;
-	//int iHighV = 255;
-
-	////Create trackbars in "Control" window, Settings set to detect a hue of RED
-	//cvCreateTrackbar("LowH", "Control", &iLowH, 179); //Hue (0 - 179)
-	//cvCreateTrackbar("HighH", "Control", &iHighH, 179);
-
-	//cvCreateTrackbar("LowS", "Control", &iLowS, 255); //Saturation (0 - 255)
-	//cvCreateTrackbar("HighS", "Control", &iHighS, 255);
-
-	//cvCreateTrackbar("LowV", "Control", &iLowV, 255);//Value (0 - 255)
-	//cvCreateTrackbar("HighV", "Control", &iHighV, 255);
-
-	int i = 0;
+	// Loop and get constant feed of the original video feed
+	// and the disparity.
 	while (true)
 	{
-		Mat imgOriginal, g1, g2;
+		// Mats Used
+		Mat imgOriginal, imgl, imgr, g1, g2;
 		Mat disp, disp8;
 
-		bool bSuccess = cap.read(imgOriginal); // read a new frame from video
+		// Check if imgOriginal (camera feed) can read a new frame
+		bool bSuccess = cap.read(imgOriginal);
 
-		if (!bSuccess) //if not success, break loop
+		// If not successful, break loop
+		if (!bSuccess)
 		{
-			cout << "Cannot read a frame from video stream" << endl;
+			cout << "cannot read a frame from video stream" << endl;
 			break;
 		}
 
-		Mat imgHSV;
+		// TEST IMAGES
+		// Used for doing a disparity image with two offset images
+		// Uncomment the cvtColor to test images and comment the camera feed
+		//imgl = imread("tsuL.png");
+		//imgr = imread("tsuR.png");
+		//cvtColor(imgl, g1, CV_BGR2GRAY);
+		//cvtColor(imgr, g1, CV_BGR2GRAY);
 
-		//// Image of the using the Camera
-		//IplImage imgStereo(imgOriginal);
-
-		//// Image of the original
-		//IplImage imgO(imgOriginal);
-
-		//cvtColor(imgOriginal, imgHSV, COLOR_BGR2HSV); //Convert the captured frame from BGR to HSV
+		// TEST CAMERA FEED
+		// Used for doing a disparity image from single webcam feed
+		// Sets the color of the camera and store it into g1/g2
 		cvtColor(imgOriginal, g1, CV_BGR2GRAY);
 		cvtColor(imgOriginal, g2, CV_BGR2GRAY);
 
 		// StereoBM
+		// Use StereoBM to create disparity image
 		StereoBM sbm;
-		sbm.state->SADWindowSize = 9;
+		sbm.state->SADWindowSize = 7;//9;
 		sbm.state->numberOfDisparities = 112;
 		sbm.state->preFilterSize = 5;
 		sbm.state->preFilterCap = 61;
@@ -82,29 +70,26 @@ int main(int argc, char** argv)
 		sbm.state->textureThreshold = 507;
 		sbm.state->uniquenessRatio = 0;
 		sbm.state->speckleWindowSize = 0;
-		sbm.state->speckleRange = 8;
+		sbm.state->speckleRange = 4;// 8;
 		sbm.state->disp12MaxDiff = 1;
 
+		// Set StereoBM with g1 and g2 and store it in disp
 		sbm(g1, g2, disp);
 		normalize(disp, disp8, 0, 255, CV_MINMAX, CV_8U);
 
-		//imshow("Original", imgOriginal); //show the original image
-		//imshow("Stereo Vision", disp8); //show the stereo image
-
-		//use cvShowImage instead of imshow
-		// Image of the using the Camera
-		IplImage imgStereo(disp8);
 		// Image of the original
 		IplImage imgO(imgOriginal);
+		// Image of the disparity
+		IplImage imgStereo(disp8);
 		cvShowImage("Original", &imgO);
 		cvShowImage("Stereo Vision", &imgStereo);
 
-		if (waitKey(30) == 27) //wait for 'esc' key press for 30ms. If 'esc' key is pressed, break loop
+		// Exit loop by pressing the 'esc' key
+		if (waitKey(30) == 27)
 		{
 			cout << "esc key is pressed by user" << endl;
 			break;
 		}
-		i++;
 	}
 
 	return 0;

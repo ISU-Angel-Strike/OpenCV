@@ -92,6 +92,10 @@
     </ClCompile>
     <ClCompile Include="StereoScopicTest.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\tsuL.png" />
+    <Image Include="..\tsuR.png" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

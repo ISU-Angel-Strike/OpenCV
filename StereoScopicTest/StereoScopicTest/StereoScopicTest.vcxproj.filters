@@ -33,4 +33,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\tsuL.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="..\tsuR.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+  </ItemGroup>
 </Project>
