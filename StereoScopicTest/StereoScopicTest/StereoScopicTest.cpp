@@ -48,16 +48,22 @@ int main(int argc, char** argv)
 		// TEST IMAGES
 		// Used for doing a disparity image with two offset images
 		// Uncomment the cvtColor to test images and comment the camera feed
-		//imgl = imread("tsuL.png");
-		//imgr = imread("tsuR.png");
-		//cvtColor(imgl, g1, CV_BGR2GRAY);
-		//cvtColor(imgr, g1, CV_BGR2GRAY);
+		imgl = imread("tsuL.png");
+		imgr = imread("tsuR.png");
+		if (!imgl.data || !imgr.data)
+		{
+			cout << "Couldn't find image" << endl;
+			return -1;
+		}
+
+		cvtColor(imgl, g1, CV_BGR2GRAY);
+		cvtColor(imgr, g1, CV_BGR2GRAY);
 
 		// TEST CAMERA FEED
 		// Used for doing a disparity image from single webcam feed
 		// Sets the color of the camera and store it into g1/g2
-		cvtColor(imgOriginal, g1, CV_BGR2GRAY);
-		cvtColor(imgOriginal, g2, CV_BGR2GRAY);
+		//cvtColor(imgOriginal, g1, CV_BGR2GRAY);
+		//cvtColor(imgOriginal, g2, CV_BGR2GRAY);
 
 		// StereoBM
 		// Use StereoBM to create disparity image
@@ -78,7 +84,7 @@ int main(int argc, char** argv)
 		normalize(disp, disp8, 0, 255, CV_MINMAX, CV_8U);
 
 		// Image of the original
-		IplImage imgO(imgOriginal);
+		IplImage imgO(imgl);
 		// Image of the disparity
 		IplImage imgStereo(disp8);
 		cvShowImage("Original", &imgO);
