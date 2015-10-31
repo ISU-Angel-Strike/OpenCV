@@ -19,10 +19,16 @@ int main(int argc, char** argv)
 
 	// Capture the video from the webcam
 	// 0 - webcam, 1 - external video feed
-	VideoCapture cap(1); 
+	VideoCapture capWebcam(0);
+	VideoCapture capExternal(1);
 
 	// If there's no video capture, exit program
-	if (!cap.isOpened())  
+	if (!capWebcam.isOpened())
+	{
+		cout << "Cannot open the web cam" << endl;
+		return -1;
+	}
+	if (!capExternal.isOpened())
 	{
 		cout << "Cannot open the web cam" << endl;
 		return -1;
@@ -33,11 +39,12 @@ int main(int argc, char** argv)
 	while (true)
 	{
 		// Mats Used
-		Mat imgOriginal, imgl, imgr, g1, g2;
+		// iml - webcam, imgr - external camera
+		Mat imgl, imgr, g1, g2;
 		Mat disp, disp8;
 
 		// Check if imgOriginal (camera feed) can read a new frame
-		bool bSuccess = cap.read(imgOriginal);
+		bool bSuccess = capWebcam.read(imgr) && capExternal.read(imgl);
 
 		// If not successful, break loop
 		if (!bSuccess)
@@ -46,39 +53,15 @@ int main(int argc, char** argv)
 			break;
 		}
 
-		// TEST IMAGES
-		// Used for doing a disparity image with two offset images
-		// Uncomment the cvtColor to test images and comment the camera feed
-		/*imgl = cvLoadImage(argv[1]);
-		imgr = cvLoadImage(argv[1]);*/
-		/*cout << "Arguments:" << endl;
-		cout << argv[1] << " " << argv[2] << endl;*/
-
 		// Resize imgl and imgr
 		/*Size size(384, 288);
 		resize(imgl, imgl, size);
 		resize(imgr, imgr, size);*/
 
-		// Error if images are not read
-		/*if (!imgl.data || !imgr.data)
-		{
-			if (!imgl.data && !imgr.data)
-				cout << "Couldn't find imgl and imgr" << endl;
-			else if (!imgl.data)
-				cout << "Couldn't find imgl" << endl;
-			else
-				cout << "Couldn't find imgr" << endl;
-			return -1;
-		}*/
-
-		/*cvtColor(imgl, g1, CV_BGR2GRAY);
-		cvtColor(imgr, g1, CV_BGR2GRAY);*/
-
-		// TEST CAMERA FEED
 		// Used for doing a disparity image from single webcam feed
 		// Sets the color of the camera and store it into g1/g2
-		cvtColor(imgOriginal, g1, CV_BGR2GRAY);
-		cvtColor(imgOriginal, g2, CV_BGR2GRAY);
+		cvtColor(imgl, g1, CV_BGR2GRAY);
+		cvtColor(imgr, g2, CV_BGR2GRAY);
 
 		// StereoBM
 		// Use StereoBM to create disparity image
@@ -98,15 +81,14 @@ int main(int argc, char** argv)
 		sbm(g1, g2, disp);
 		normalize(disp, disp8, 0, 255, CV_MINMAX, CV_8U);
 
-		// Image of the original
-		/*IplImage imgOL(imgl);
-		IplImage imgOR(imgr);*/
-		IplImage imgO(imgOriginal);
-		// Image of the disparity
+		// Image of the originals and disparity
+		IplImage imgOL(imgl);
+		IplImage imgOR(imgr);
 		IplImage imgStereo(disp8);
-		/*cvShowImage("Original Left", &imgOL);
-		cvShowImage("Original Right", &imgOR);*/
-		cvShowImage("Original Image", &imgO);
+
+		// Show images
+		cvShowImage("Original Left", &imgOL);
+		cvShowImage("Original Right", &imgOR);
 		cvShowImage("Stereo Vision", &imgStereo);
 
 		// Exit loop by pressing the 'esc' key
