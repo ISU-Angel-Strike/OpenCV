@@ -25,18 +25,12 @@ int main(int argc, char** argv)
 		Mat imgl, imgr, g1, g2;
 		Mat disp, disp8;
 
-		// TEST IMAGES
 		// Used for doing a disparity image with two offset images
 		// Uncomment the cvtColor to test images and comment the camera feed
 		imgl = cvLoadImage(argv[1]);
-		imgr = cvLoadImage(argv[1]);
+		imgr = cvLoadImage(argv[2]);
 		/*cout << "Arguments:" << endl;
 		cout << argv[1] << " " << argv[2] << endl;*/
-
-		// Resize imgl and imgr
-		/*Size size(384, 288);
-		resize(imgl, imgl, size);
-		resize(imgr, imgr, size);*/
 
 		// Error if images are not read
 		if (!imgl.data || !imgr.data)
@@ -51,7 +45,7 @@ int main(int argc, char** argv)
 		}
 
 		cvtColor(imgl, g1, CV_BGR2GRAY);
-		cvtColor(imgr, g1, CV_BGR2GRAY);
+		cvtColor(imgr, g2, CV_BGR2GRAY);
 
 		// StereoBM
 		// Use StereoBM to create disparity image
@@ -62,9 +56,9 @@ int main(int argc, char** argv)
 		sbm.state->preFilterCap = 61;
 		sbm.state->minDisparity = -39;
 		sbm.state->textureThreshold = 507;
-		sbm.state->uniquenessRatio = 0;
+		sbm.state->uniquenessRatio = 15;
 		sbm.state->speckleWindowSize = 0;
-		sbm.state->speckleRange = 4;// 8;
+		sbm.state->speckleRange = 8;// 8;
 		sbm.state->disp12MaxDiff = 1;
 
 		// Set StereoBM with g1 and g2 and store it in disp
