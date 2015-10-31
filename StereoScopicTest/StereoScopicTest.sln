@@ -7,6 +7,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "StereoScopicTest", "StereoS
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "StereoVisionTwoCameras", "..\StereoVisionTwoCameras\StereoVisionTwoCameras\StereoVisionTwoCameras.vcxproj", "{B9C2B088-8EE6-4584-A79C-88FEC6235DD5}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "StereoVisionTwoImages", "StereoVisionTwoImages\StereoVisionTwoImages.vcxproj", "{71D2FAB1-D995-40E3-8FF2-EB4F13EF7723}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -21,6 +23,10 @@ Global
 		{B9C2B088-8EE6-4584-A79C-88FEC6235DD5}.Debug|Win32.Build.0 = Debug|Win32
 		{B9C2B088-8EE6-4584-A79C-88FEC6235DD5}.Release|Win32.ActiveCfg = Release|Win32
 		{B9C2B088-8EE6-4584-A79C-88FEC6235DD5}.Release|Win32.Build.0 = Release|Win32
+		{71D2FAB1-D995-40E3-8FF2-EB4F13EF7723}.Debug|Win32.ActiveCfg = Debug|Win32
+		{71D2FAB1-D995-40E3-8FF2-EB4F13EF7723}.Debug|Win32.Build.0 = Debug|Win32
+		{71D2FAB1-D995-40E3-8FF2-EB4F13EF7723}.Release|Win32.ActiveCfg = Release|Win32
+		{71D2FAB1-D995-40E3-8FF2-EB4F13EF7723}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
