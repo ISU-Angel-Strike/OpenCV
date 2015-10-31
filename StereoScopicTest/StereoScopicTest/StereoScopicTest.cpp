@@ -18,14 +18,14 @@ int main(int argc, char** argv)
 {
 
 	// Capture the video from the webcom
-	VideoCapture cap(0); 
+	//VideoCapture cap(0); 
 
 	// If there's no video capture, exit program
-	if (!cap.isOpened())  
+	/*if (!cap.isOpened())  
 	{
 		cout << "Cannot open the web cam" << endl;
 		return -1;
-	}
+	}*/
 
 	// Loop and get constant feed of the original video feed
 	// and the disparity.
@@ -36,23 +36,31 @@ int main(int argc, char** argv)
 		Mat disp, disp8;
 
 		// Check if imgOriginal (camera feed) can read a new frame
-		bool bSuccess = cap.read(imgOriginal);
+		//bool bSuccess = cap.read(imgOriginal);
 
 		// If not successful, break loop
-		if (!bSuccess)
+		/*if (!bSuccess)
 		{
 			cout << "cannot read a frame from video stream" << endl;
 			break;
-		}
+		}*/
 
 		// TEST IMAGES
 		// Used for doing a disparity image with two offset images
 		// Uncomment the cvtColor to test images and comment the camera feed
-		imgl = imread("tsuL.png");
-		imgr = imread("tsuR.png");
+		imgl = cvLoadImage(argv[1]);
+		imgr = cvLoadImage(argv[2]);
+		/*cout << "Arguments:" << endl;
+		cout << argv[1] << " " << argv[2] << endl;*/
+		// Error if images are not read
 		if (!imgl.data || !imgr.data)
 		{
-			cout << "Couldn't find image" << endl;
+			if (!imgl.data && !imgr.data)
+				cout << "Couldn't find imgl and imgr" << endl;
+			else if (!imgl.data)
+				cout << "Couldn't find imgl" << endl;
+			else
+				cout << "Couldn't find imgr" << endl;
 			return -1;
 		}
 
@@ -68,7 +76,7 @@ int main(int argc, char** argv)
 		// StereoBM
 		// Use StereoBM to create disparity image
 		StereoBM sbm;
-		sbm.state->SADWindowSize = 7;//9;
+		sbm.state->SADWindowSize = 9;//9;
 		sbm.state->numberOfDisparities = 112;
 		sbm.state->preFilterSize = 5;
 		sbm.state->preFilterCap = 61;
@@ -84,10 +92,12 @@ int main(int argc, char** argv)
 		normalize(disp, disp8, 0, 255, CV_MINMAX, CV_8U);
 
 		// Image of the original
-		IplImage imgO(imgl);
+		IplImage imgOL(imgl);
+		IplImage imgOR(imgr);
 		// Image of the disparity
 		IplImage imgStereo(disp8);
-		cvShowImage("Original", &imgO);
+		cvShowImage("Original Left", &imgOL);
+		cvShowImage("Original Right", &imgOR);
 		cvShowImage("Stereo Vision", &imgStereo);
 
 		// Exit loop by pressing the 'esc' key
