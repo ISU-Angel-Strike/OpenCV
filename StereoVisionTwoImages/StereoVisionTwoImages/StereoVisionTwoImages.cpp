@@ -27,8 +27,8 @@ int main(int argc, char** argv)
 
 		// Used for doing a disparity image with two offset images
 		// Uncomment the cvtColor to test images and comment the camera feed
-		imgl = cvLoadImage(argv[1]);
-		imgr = cvLoadImage(argv[2]);
+		imgl = cvLoadImage(argv[7]);
+		imgr = cvLoadImage(argv[8]);
 		/*cout << "Arguments:" << endl;
 		cout << argv[1] << " " << argv[2] << endl;*/
 
@@ -50,30 +50,55 @@ int main(int argc, char** argv)
 		// StereoBM
 		// Use StereoBM to create disparity image
 		StereoBM sbm;
-		sbm.state->SADWindowSize = 9;//9;
-		sbm.state->numberOfDisparities = 112;
-		sbm.state->preFilterSize = 5;
-		sbm.state->preFilterCap = 61;
-		sbm.state->minDisparity = -39;
-		sbm.state->textureThreshold = 507;
-		sbm.state->uniquenessRatio = 15;
-		sbm.state->speckleWindowSize = 0;
+		sbm.state->SADWindowSize = 5;//9;
+		sbm.state->numberOfDisparities = 112;//48;//112
+		sbm.state->preFilterSize = 5;//5
+		sbm.state->preFilterCap = 61;//61
+		sbm.state->minDisparity = -39;//-39
+		sbm.state->textureThreshold = 507;//507
+		sbm.state->uniquenessRatio = 5;//15;
+		sbm.state->speckleWindowSize = 0;//0
 		sbm.state->speckleRange = 8;// 8;
-		sbm.state->disp12MaxDiff = 1;
+		sbm.state->disp12MaxDiff = 1;//1
 
 		// Set StereoBM with g1 and g2 and store it in disp
 		sbm(g1, g2, disp);
 		normalize(disp, disp8, 0, 255, CV_MINMAX, CV_8U);
+
+		// StereoSGBM
+		/*StereoSGBM sgbm;
+		sgbm.SADWindowSize = 5;
+		sgbm.numberOfDisparities = 192;
+		sgbm.preFilterCap = 4;
+		sgbm.minDisparity = -64;
+		sgbm.uniquenessRatio = 1;
+		sgbm.speckleWindowSize = 150;
+		sgbm.speckleRange = 2;
+		sgbm.disp12MaxDiff = 10;
+		sgbm.fullDP = false;
+		sgbm.P1 = 600;
+		sgbm.P2 = 2400;*/
+
+		// Set StereoSGBM with g1 and g2 and store it in disp
+		/*sgbm(g1, g2, disp);
+		normalize(disp, disp8, 0, 255, CV_MINMAX, CV_8U);*/
 
 		// Image of the original and disparity
 		IplImage imgOL(imgl);
 		IplImage imgOR(imgr);
 		IplImage imgStereo(disp8);
 
+		// Save the imgStereo image
+		//vector<int> compression;
+		//compression.push_back(CV_IMWRITE_PNG_COMPRESSION);
+		//compression.push_back(9);
+		//imwrite("QuadStereo.png", disp8, compression);
+
 		// Show images
 		cvShowImage("Original Left", &imgOL);
 		cvShowImage("Original Right", &imgOR);
 		cvShowImage("Stereo Vision", &imgStereo);
+		
 
 		// Exit loop by pressing the 'esc' key
 		if (waitKey(30) == 27)

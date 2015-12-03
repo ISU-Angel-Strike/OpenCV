@@ -20,7 +20,7 @@ int main(int argc, char** argv)
 	// Capture the video from the webcam
 	// 0 - webcam, 1 - external video feed
 	VideoCapture capWebcam(0);
-	VideoCapture capExternal(1);
+	VideoCapture capExternal(0);
 
 	// If there's no video capture, exit program
 	if (!capWebcam.isOpened())
@@ -44,7 +44,7 @@ int main(int argc, char** argv)
 		Mat disp, disp8;
 
 		// Check if imgOriginal (camera feed) can read a new frame
-		bool bSuccess = capWebcam.read(imgr) && capExternal.read(imgl);
+		bool bSuccess = capWebcam.read(imgl) && capExternal.read(imgr);
 
 		// If not successful, break loop
 		if (!bSuccess)
@@ -66,16 +66,16 @@ int main(int argc, char** argv)
 		// StereoBM
 		// Use StereoBM to create disparity image
 		StereoBM sbm;
-		sbm.state->SADWindowSize = 9;//9;
-		sbm.state->numberOfDisparities = 112;
-		sbm.state->preFilterSize = 5;
-		sbm.state->preFilterCap = 61;
-		sbm.state->minDisparity = -39;
-		sbm.state->textureThreshold = 507;
-		sbm.state->uniquenessRatio = 0;
-		sbm.state->speckleWindowSize = 0;
-		sbm.state->speckleRange = 4;// 8;
-		sbm.state->disp12MaxDiff = 1;
+		sbm.state->SADWindowSize = 21;//9;
+		sbm.state->numberOfDisparities = 48;//112
+		sbm.state->preFilterSize = 5;//5
+		sbm.state->preFilterCap = 61;//61
+		sbm.state->minDisparity = -39;//-39
+		sbm.state->textureThreshold = 507;//507
+		sbm.state->uniquenessRatio = 13;//0
+		sbm.state->speckleWindowSize = 0;//0
+		sbm.state->speckleRange = 8;// 8;
+		sbm.state->disp12MaxDiff = 1;//1
 
 		// Set StereoBM with g1 and g2 and store it in disp
 		sbm(g1, g2, disp);
@@ -88,7 +88,7 @@ int main(int argc, char** argv)
 
 		// Show images
 		cvShowImage("Original Left", &imgOL);
-		cvShowImage("Original Right", &imgOR);
+		//cvShowImage("Original Right", &imgOR);
 		cvShowImage("Stereo Vision", &imgStereo);
 
 		// Exit loop by pressing the 'esc' key
