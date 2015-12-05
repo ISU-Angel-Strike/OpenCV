@@ -1,5 +1,4 @@
-// StereoScopicTest.cpp : Defines the entry point for the console application.
-// http://stackoverflow.com/questions/23643813/opencv-stereo-vision-depth-map-code-does-not-work
+// StereoScopicTest.cpp
 
 
 #include "stdafx.h"
@@ -16,17 +15,14 @@ using namespace std;
 
 int main(int argc, char** argv)
 {
-
-	// Loop and get constant feed of the original video feed
-	// and the disparity.
 	while (true)
 	{
-		// Mats Used
-		Mat imgl, imgr, g1, g2;
+		// Mats left and right images and for StereoBM
+		Mat imgl, imgr, gl, gr;
+		// Mats for the disparity results of StereoBM
 		Mat disp, disp8;
 
 		// Used for doing a disparity image with two offset images
-		// Uncomment the cvtColor to test images and comment the camera feed
 		imgl = cvLoadImage(argv[7]);
 		imgr = cvLoadImage(argv[8]);
 		/*cout << "Arguments:" << endl;
@@ -44,8 +40,9 @@ int main(int argc, char** argv)
 			return -1;
 		}
 
-		cvtColor(imgl, g1, CV_BGR2GRAY);
-		cvtColor(imgr, g2, CV_BGR2GRAY);
+		// Color the images as grayscale and store in gl and gr
+		cvtColor(imgl, gl, CV_BGR2GRAY);
+		cvtColor(imgr, gr, CV_BGR2GRAY);
 
 		// StereoBM
 		// Use StereoBM to create disparity image
@@ -61,38 +58,27 @@ int main(int argc, char** argv)
 		sbm.state->speckleRange = 8;// 8;
 		sbm.state->disp12MaxDiff = 1;//1
 
-		// Set StereoBM with g1 and g2 and store it in disp
-		sbm(g1, g2, disp);
+		// Set StereoBM with gl and gr and store it in disp
+		sbm(gl, gr, disp);
 		normalize(disp, disp8, 0, 255, CV_MINMAX, CV_8U);
-
-		// StereoSGBM
-		/*StereoSGBM sgbm;
-		sgbm.SADWindowSize = 5;
-		sgbm.numberOfDisparities = 192;
-		sgbm.preFilterCap = 4;
-		sgbm.minDisparity = -64;
-		sgbm.uniquenessRatio = 1;
-		sgbm.speckleWindowSize = 150;
-		sgbm.speckleRange = 2;
-		sgbm.disp12MaxDiff = 10;
-		sgbm.fullDP = false;
-		sgbm.P1 = 600;
-		sgbm.P2 = 2400;*/
-
-		// Set StereoSGBM with g1 and g2 and store it in disp
-		/*sgbm(g1, g2, disp);
-		normalize(disp, disp8, 0, 255, CV_MINMAX, CV_8U);*/
 
 		// Image of the original and disparity
 		IplImage imgOL(imgl);
 		IplImage imgOR(imgr);
 		IplImage imgStereo(disp8);
 
-		// Save the imgStereo image
-		//vector<int> compression;
-		//compression.push_back(CV_IMWRITE_PNG_COMPRESSION);
-		//compression.push_back(9);
-		//imwrite("QuadStereo.png", disp8, compression);
+		// Get distance using reprojectImageTo3D
+		// XYZ is the object to contain all of 3D pixel information, will be used to calculate distance
+		Mat XYZ;
+		// Q is the object that holds all of the camera information needed for reprojectImageTo3D
+		Mat Q;
+		//**** Needs to be Revised/Implemented ****//
+		// Creating the Q object does not work with the current camera that is used for this test
+		// TODO
+		//
+		//stereoCalibration(...);
+		//stereoRectify(...);
+		//reprojectImageTo3D(disp8, XYZ, Q, false, CV_32F);
 
 		// Show images
 		cvShowImage("Original Left", &imgOL);
